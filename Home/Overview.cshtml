@@ -1,0 +1,174 @@
+﻿@{
+    Layout = "~/Shared/Layouts/_MainLayout.cshtml";
+    Page.Title = "Home Page";  
+    Service dbService = new Service();
+ 
+    var todaysPlan = new Dictionary<string, string>(){{"id", "1"}, {"Task","Get My Passport"}, {"Time","9:00 am - 10:00 am"},{"Project","Personl"}};
+     
+    
+
+    var nextDays = new List<SelectListItem>()
+        {   new SelectListItem { Value = "1", Text = "Tomorrow" },
+            new SelectListItem { Value = "2", Text = "Next 2 Days"},
+            new SelectListItem { Value = "3", Text = "Next 3 Days"}
+
+        };
+
+        List<Task> currentDayTasks = dbService.GetTodaysTasks();
+        List<Task> overDueTasks = dbService.GetOverDueTasks();
+        List<Task> tomorowsTask = dbService.GetTasksForTomorrow();
+        List<Task> dayAfterTomorowsTask = dbService.GetTasksForDayAfter();
+        List<Task> next2DaysTasks = dbService.GetTasksForTwoDaysAfter();
+        List<Task> unplannedTasks = dbService.GetAllUnplannedTasks();
+
+
+       var tomorrowList = "[";
+       foreach(var task in tomorowsTask){
+           tomorrowList += "{ \"TaskName\": \""+task.Name+"\",\"Project\":\""+task.projectName+"\",\"Time\":\""+task.ScheduledTime+"\" ,\"id\": \""+task.ID+"\" ,\"Planned\":\"planned\"},";
+
+       }
+
+      tomorrowList += "]";
+
+      var dayAfterTomorrowList = "[";
+       foreach(var task in dayAfterTomorowsTask){
+           dayAfterTomorrowList += "{ \"TaskName\": \""+task.Name+"\",\"Project\":\""+task.projectName+"\",\"Time\":\""+task.ScheduledTime+"\" ,\"id\": \""+task.ID+"\" ,\"Planned\":\"planned\"},";
+
+       }
+
+      dayAfterTomorrowList += "]";
+
+      var TwoDayAfterTomorrowList = "[";
+       foreach(var task in next2DaysTasks){
+           TwoDayAfterTomorrowList += "{ \"TaskName\": \""+task.Name+"\",\"Project\":\""+task.projectName+"\",\"Time\":\""+task.ScheduledTime+"\" ,\"id\": \""+task.ID+"\" ,\"Planned\":\"planned\"},";
+
+       }
+
+      TwoDayAfterTomorrowList += "]";
+        
+      
+      var UnplannedTaskList = "[";
+       foreach(var task in unplannedTasks){
+           UnplannedTaskList += "{ \"TaskName\": \""+task.Name+"\",\"Project\":\""+task.projectName+"\",\"Time\":\""+task.ScheduledTime+"\" ,\"id\": \""+task.ID+"\" ,\"Planned\":\"planned\"},";
+
+       }
+
+      UnplannedTaskList += "]";
+}
+
+<script>   
+        var tomorrowList = @Html.Raw(tomorrowList);
+        var next2Days =  @Html.Raw(dayAfterTomorrowList);
+        var next3Days =  @Html.Raw(TwoDayAfterTomorrowList);
+        var unplanned =  @Html.Raw(UnplannedTaskList);
+       
+
+   </script>
+
+<br>
+<div class="todayPane">
+  <fieldset class="widgetWindow">
+    <div class="widgetHeader">&nbsp;&nbsp;What's my plan today?</div>
+    <div class="widgetTableDiv">
+    <table class="widgetTable">
+     @foreach(var task in currentDayTasks){
+        <tr>
+            <td width="50%">@task.Name</td>
+            <td>@task.ScheduledTime</td>
+            <td>@task.projectName</td>
+            <td><input type="checkbox" name="todayItem"@task.ID></td>
+     </tr> 
+     }
+     
+       
+    </table>
+    </div>
+    <div style="float: right; margin-right: 12px; margin-bottom: 3px;">
+      <form action="Overview" method="post">
+         <input type="button" value="Schedule">
+         <input type="button" value="Complete">  
+         <input type="button" value="Postpone">
+      </form>
+    </div>
+  </fieldset>
+</div>
+
+<div class="outstandingPane">
+  <fieldset class="widgetWindow">
+    <div class="widgetHeader">&nbsp;&nbsp;What did I miss?</div>
+    <div class="widgetTableDiv">
+    <table class="widgetTable">
+     @foreach(var due in overDueTasks){
+        <tr>
+            <td width="70%">@due.Name</td>
+            <td>@due.PlannedDate.ToString("MMM dd, yyyy")</td>
+            <td><input type="checkbox" name="todayItem"@due.ID></td>
+     </tr> 
+     }
+     
+       
+    </table>
+    </div>
+     <div style="float: right; margin-right: 12px; margin-bottom: 3px;">
+      <form action="Overview" method="post">
+         <input type="button" value="Complete">  
+         <input type="button" value="Postpone">
+      </form>
+    </div>
+  </fieldset>
+</div>
+
+<div class="tomorrowPane">
+ <fieldset class="widgetWindow">
+    <div class="widgetHeader">&nbsp;&nbsp;What do I have ?</div>
+    <div class="fieldSelectorWidget">
+      <a href="#" id="1">Tomorrow </a>
+      ,<a href="#" id="2">In two days </a>
+      ,<a href="#" id="3">In three days </a>
+      ,<a href="#" id="4">Unplaned </a>
+    </div>
+    <div class="widgetTableDiv">
+    <table class="widgetTable" id="futureTable">
+    </table>
+    </div>
+ </fieldset>
+</div>
+<script type="text/javascript">
+
+
+    $(function () {
+        $('a').on('click', function () {
+            var $this = $(this);
+            var futureTable = $('#futureTable');
+            futureTable.html('');
+            if ($this.attr('id') == '2') {
+                writeToTable(next2Days, futureTable);
+            } else if ($this.attr('id') == '3') {
+                writeToTable(next3Days, futureTable);
+            } else if ($this.attr('id') == '1') {
+                writeToTable(tomorrowList, futureTable);
+            } else if ($this.attr('id') == '4') {
+                writeToTable(unplanned, futureTable);
+            }
+
+        });
+
+        function writeToTable(JSonList, table) {
+            var table_row = "";
+            var table_cell = "";
+            $.each(JSonList, function (index, item) {
+                table_row = $('<tr>', { id: item.id });
+                table_row = $('<tr>', { class: item.Planned });
+                table_cell = $('<td>', { html: item.TaskName });
+                table_row.append(table_cell);
+                table_cell = $('<td>', { html: item.Project });
+                table_row.append(table_cell);
+                table_cell = $('<td>', {html: item.Time});
+                table_row.append(table_cell);
+                table.append(table_row);
+            })
+        }
+        $(document).ready(writeToTable(tomorrowList, $('#futureTable')));
+    })();
+
+ </script>

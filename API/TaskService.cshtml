@@ -1,0 +1,52 @@
+﻿
+
+@{
+   
+
+}
+@{
+    var webMethod = Request.QueryString["method"];
+    if(!webMethod.IsEmpty()){
+        if(webMethod.Equals("getTodayTasks")){
+          Json.Write(getDailyTasks(), Response.Output);
+        }else if(webMethod.Equals("getTomorrowTasks")){
+          Json.Write(getDailyTasks(), Response.Output);
+        }else if(webMethod.Equals("getDayAfterTasks")){
+          Json.Write(getDailyTasks(), Response.Output);
+        }else if(webMethod.Equals("getDailyTasks")){
+          Json.Write(getDailyTasks(), Response.Output);
+        }else if(webMethod.Equals("addTask")){
+          Json.Write(addTask(), Response.Output);
+        }
+       
+    }
+}
+
+
+    
+@functions{
+ Service dataService = new Service();
+ public List <Task> getDailyTasks(){
+      var userID = Request.QueryString["userID"];
+      var passWord = Request.QueryString["passWord"];
+      var date = Request.QueryString["date"];
+      List <Task> taskList = dataService.GetTasksForSpecificDate(date);
+      if(taskList.Count==0){
+          new Task();
+      }
+      return taskList;    
+ }   
+
+
+ public string addTask(){
+     System.IO.StreamReader sr = new  System.IO.StreamReader(Request.InputStream);
+     string jsonString = String.Empty;
+     jsonString = sr.ReadToEnd();
+     Task task =  Json.Decode<Task>(jsonString);
+     dataService.SaveTask(task);
+     return "sucess!!!";
+ }
+}
+
+
+

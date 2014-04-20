@@ -1,0 +1,280 @@
+@import url("jquery.ui.datepicker.css");
+@import url("jquery.ui.theme.css");
+
+/*General Styles ----*/
+
+*,html,body {
+    margin: 0px;
+    padding: 0px;
+}
+body{
+    background-color: #ffffff;
+    color: #333;
+    font-family: Verdana,Helvetica,sans-serif;
+    font-size: .75em;
+}
+a:link{
+    color: #333399;
+    text-decoration: none;
+    font-size: .85em;
+    text-decoration:underline;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+a:visited{
+    color:#333399;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+a:hover{
+    color:#a70202;
+    text-decoration:underline;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+a:active{
+    color:red;
+    text-decoration:underline;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+
+active{
+    color:red;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+h1,h2{
+    margin-top: 10px;
+    font-size: 20px;
+}
+input, select {
+    padding: 5px;
+}
+input[type="text"]{
+    border: 1px solid #cdcdcd;
+}
+
+/*Layout --------------*/
+
+#page{
+    margin: 0 auto;
+    width: 960px;
+    background-color: #fff;
+}
+#header{
+    height: 60px;
+}
+#content,#footer{
+    border-top: 1px solid #cdcdcd;
+    clear: both;
+    margin: 0px 10px 0px 10px;
+    padding: 20px;
+}
+#footer{
+    color: #cdcdcd;
+    padding: 10px;
+    text-align: center;
+}
+.logo a{
+    float: left;
+    margin: 15px;
+    font-size: 3em;
+}
+
+#headerRight{
+    float: right;
+    margin-right: 20px;
+}
+
+#search {
+    margin-top: 40px;
+    text-align: right;
+}
+
+#accountSummary {
+    float:right;
+    margin-top: 10px;
+    text-align: right;
+}
+
+
+/*----------Widget Windows ----------*/
+
+
+.widgetWindow{
+    border-bottom-style: solid;
+    border-width: 1px;
+    width: 100%;
+    padding-bottom: 2px;
+    padding-top: 0px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.widgetHeader{
+    background-color: #cdcdcd;
+    font-family: Verdana,Arial;
+    color: #ffffff;
+    font-style: italic;
+    font-size: 1.3em;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px; 
+    
+}
+
+.widgetTableDiv{
+    padding: 10px;
+}
+.widgetTable{
+    width: 100%;
+    padding: 0px;
+    border-collapse:collapse;
+    
+}
+
+.widgetTable tr{
+    border: 1px solid #cdcdcd;
+    padding-top: 2px;
+    padding-left: 2px;
+    padding-bottom: 2px;
+    cursor:pointer;
+}
+
+.widgetTable tr:hover {
+    background: #0ff;
+}
+
+.widgetTable td{
+    padding-top: 2px;
+    padding-left: 2px;
+    padding-bottom: 2px;
+    
+}
+
+.widgetTable th{
+    border: 1px solid #000;
+    background-color: #cdcdcd;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    padding-left: 4px;
+    padding-bottom: 2px;
+    
+}
+
+.fieldSelectorWidget{
+    margin-left: 12px;
+    margin-top: 10px;
+    padding: 0 0 0 0;
+}
+/*--------- Panes --------*/
+
+.todayPane{
+    float: left;
+    width: 50%;
+}
+.outstandingPane{
+    float: right;
+    width: 45%;
+}
+
+
+.tomorrowPane{
+    width: 100%;
+    float: left;
+}
+
+.scheduleDailyPlanPane{
+    width: 100%;
+    float: left;
+}
+.scheduleDailyTimeSheetPane{
+   width: 100%;
+   float: left; 
+ }
+
+.scheduleDailyTaskTime{
+  width: 70%;
+  float: left; 
+}
+
+.scheduleDailyTask{
+  width: 25%;
+  float: right;   
+  margin-top: 15px;
+}
+
+.datepicker1{
+   display:none; 
+   width: 25%;
+   float: left;
+   margin-left: 10px;
+   margin-top: 10px;
+   margin-bottom: 10px;
+}
+
+/*----------Inputs -------*/
+input[type=button] {
+    font-family: Verdana,Helvetica,sans-serif;
+    font-size: .90em;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    background:transparent;
+    
+    /* ... other rules ... */
+    cursor:pointer;
+    height: 20px;
+
+}
+
+input[type=text] {
+    font-family: Verdana,Helvetica,sans-serif;
+    font-size: .90em;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    background:transparent;
+    
+    /* ... other rules ... */
+    height: 20px;
+    border:1px;
+}
+
+
+
+select {
+    font-family: Verdana,Helvetica,sans-serif;
+    font-size: .90em;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    width: 100px;
+    
+    /* ... other rules ... */
+    cursor:pointer;
+    height: 20px;
+    margin-left: 20px;
+    border-radius: 2px;
+}
+
+.textArea{
+    font-family: Verdana,Helvetica,sans-serif;
+    font-size: .90em;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    overflow: hidden;
+    background:transparent;
+
+    
+    /* ... other rules ... */
+    height: 20px;
+    border:1px;  
+    
+}
+
+/*-----Tables-------*/
+
+.futureTable .unplanned{
+   font-weight: bold;
+}

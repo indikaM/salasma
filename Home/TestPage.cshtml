@@ -1,0 +1,46 @@
+﻿<html><head>
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" type="text/css" media="all" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+
+        <!--<script src="/Scripts/jquery-1.11.0.js"></script>
+        <!--script src="/Scripts/jquery.ui.datepicker.js" type="text/javascript"></script>-->
+        <link href="@Href("/Css/Styles.css")" rel="stylesheet" />
+        <link href="@Href("Css/smoothness/jquery-ui-1.10.4.custom.css")" rel="stylesheet" type="text/css" />
+
+
+<script type="text/javascript">
+$(function () {
+$('#txtCalendarDate1').datepicker({ dateFormat: 'yy-mm-dd' });
+$('#txtCalendarDate1').datepicker();
+$('#txtCalendarDate2').datepicker({ dateFormat: 'yy-mm-dd' });
+$('#txtCalendarDate2').datepicker();
+$('#txtCalendarDate3').datepicker({ dateFormat: 'yy-mm-dd' });
+$('#txtCalendarDate3').datepicker();
+$('#txtCalendarDate4').datepicker({ dateFormat: 'yy-mm-dd' });
+$('#txtCalendarDate4').datepicker();
+});
+</script> 
+<style>
+.ui-datepicker th { background-color: #CCCCFF; }
+</style>
+</head>
+<body>
+<table id="tblTest">
+ <tr id="tr1">
+ <td>Calendar Date 1</td>
+ <td><input type="text" id="txtCalendarDate1" value="" /></td>
+ </tr>
+ <tr id="tr2">
+ <td>Calendar Date 2</td>
+ <td><input type="text" id="txtCalendarDate2" value="" /></td>
+ </tr>
+ <tr id="tr5">
+ <td>Calendar Date 3</td>
+ <td><input type="text" id="txtCalendarDate3" value="" /></td>
+ </tr>
+ <tr id="tr6">
+ <td>Calendar Date 4</td>
+ <td><input type="text" id="txtCalendarDate4" value="" /></td>
+ </tr>
+</table></body></html>

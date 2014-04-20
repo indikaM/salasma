@@ -1,0 +1,56 @@
+﻿@{
+    
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Salasma - @Page.Title</title>
+        <script src="/Scripts/jquery-1.11.0.js"></script>
+        <script src="/Scripts/jquery.ui.core.js"></script>
+        <script src="/Scripts/jquery.ui.datepicker.js" type="text/javascript"></script>
+        <link href="@Href("/Css/Styles.css")" rel="stylesheet" />
+        <link href="@Href("/Css/jquery-ui.css")" rel="stylesheet" />
+        <!--<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" type="text/css" media="all" />-->
+
+
+        @RenderSection("head",required:false)
+
+
+    </head>
+    <body>
+        <div id="page">
+            <div id="header">
+                <p class="logo"><a href="@Href("~/")">Salasma</a></p>
+                <div id="headerRight">
+                    <div id="accountSummary"><a href="#">AccountSummary </a>
+                    |<a href="@Href("~/Home/Overview")">Overview</a>
+                    |<a href="@Href("~/Home/DailyPlan")">Planing</a>
+                    |<a href="#">Contacts </a>
+                    |<a href="#">Settings </a>
+                    |<a href="#">Help </a>
+                    |<a href="#">Logout </a>
+                   </div>
+                    @{
+                        DateTime time = DateTime.Now;
+                        string format = "dddddd , MMMMMMM  dd, yyyy | hh:mm";
+                        string formatted = time.ToString(format);
+
+                    }
+                   <div id="search">@formatted</div>
+                   <div id="search">Search@*@RenderPage("~/Shared/Partials/_Search.cshtml")*@</div>
+                </div>
+            </div>
+            <div id="content">
+                <div id="main">
+                    @RenderBody()
+                </div>
+            </div>
+            <div id="footer">
+               &copy;@DateTime.Now.Year Salasma. All rights reserved.
+            </div>
+        </div>
+    </body>
+</html>

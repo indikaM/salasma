@@ -1,0 +1,452 @@
+﻿@{
+     Layout = "~/Shared/Layouts/_MainLayout.cshtml";
+     Page.Title = "Daily Plan";  
+     Service dbService = new Service();
+
+     List<Project> projectList = dbService.GetProjectList();
+     var projectTypes = new List<SelectListItem>();
+     foreach(var project in projectList){
+         projectTypes.Add(new SelectListItem { Value =  project.ProjectID.ToString(), Text = project.ProjectName });
+     }
+   
+     List<Task> currentDayTasks = dbService.GetTodaysTasks();   
+
+
+}
+
+<script>
+        var today = '@DateTime.Now.ToString("yyyy-MM-dd")';
+        var tomorrw = '@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")';
+        var dayafter = '@DateTime.Now.AddDays(2).ToString("yyyy-MM-dd")';
+        var taskURL = "http://localhost:35460/API/TaskService.cshtml";
+        var todayDateString = '@DateTime.Now.ToString("ddd, MMMM dd, yyyy")';
+        var tomorrowDateString = '@DateTime.Now.AddDays(1).ToString("ddd, MMMM dd, yyyy")';
+        var dayAfterDateString = '@DateTime.Now.AddDays(2).ToString("ddd, MMMM dd, yyyy")';
+        var JSONArray = new Array();  //Created as a global Array to hold the newly created Tasks
+        var taskObject = null;
+        //method=getTodaysTasks&date=2014-03-15
+
+</script>
+
+<script>
+
+    $(function () {
+        $("#addtask").css("border", "1px solid #000000");
+        $("#addtask").css("border-radius", "8px");
+        $("#addtask").focus();
+
+
+        $("#Add").on('click', function () {
+            AddTask();
+        });
+
+        $("#addtask").on("click", function () {
+            var $this = $(this);
+            $this.val("");
+        });
+
+        $("input[text].textArea").on("click", function (e) {
+            $(this).css("border", "1px solid #000000");
+        });
+
+        $(".textArea").on("focusout", function () {
+            var $this = $(this);
+            $this.css("border", "0px");
+        });
+
+        $("#Today").on("click", function () {
+            setSelectedDate(todayDateString);
+        });
+
+        $("#Tomorrow").on("click", function () {
+            setSelectedDate(tomorrowDateString);
+        });
+
+        $("#DayAfter").on("click", function () {
+            setSelectedDate(dayAfterDateString);
+        });
+
+        $(".datepicker1").datepicker({
+            altField: "#pickedDate",
+            altFormat: "yy-mm-dd",
+            dateFormat: "M d,y",
+            onSelect: function (dateText) {
+                setSelectedDate($("#pickedDate").val());
+                showHideDateicker(false);
+            }
+        });
+
+        $("#Gratitude").on("click", function () {
+            try {
+                var pickedDate = $("#pickedDate");
+                alert(pickedDate.val());
+            } catch (err) {
+                alert(err);
+            }
+        });
+
+        $("#Daily,#Weekly , #Monthly").on("click", function () {
+            getTasks("Daily");
+            showHideDateicker(true);
+
+        });
+
+        $("#Today, #Tomorrow , #DayAfter").on("click", function () {
+            $this = $(this);
+            try {
+                getTasks($this.attr('id'))
+                showHideDateicker(false);
+            } catch (err) {
+                alert(err);
+            }
+
+        });
+
+        function showHideDateicker(show) {
+            var $this = $(".datepicker1");
+            if (show) {
+                $this.show();
+            } else {
+                $this.hide();
+            }
+        }
+        function setSelectedDate(val) {
+            var dateText = $("#newlyPickedDate");
+            $("#pickedDate").val($.datepicker.formatDate('yy-mm-dd', new Date(val)));
+            dateText.html($.datepicker.formatDate('D, MM d , yy', new Date(val)));
+            getTasks("Daily");
+        }
+        function getTasks(selDate) {
+            var dateToGet = $("#pickedDate").val();
+            var data = null;
+            console.log(taskURL + "?method=get" + selDate + "Tasks&date=" + dateToGet + "")
+
+            $.ajax({
+                type: "GET",
+                url: taskURL + "?method=get" + selDate + "Tasks&date=" + dateToGet + "",
+                dataType: 'json',
+                cache: false,
+                success: function (data, textStatus, xhr) {
+                    //JSONArray - Need to clear here;
+                    JSONArray.length = 0;
+                    JSONArray = $.merge(data, JSONArray);
+                    updateTasks(data);
+                },
+                error: function (data, textStatus, errorThrown) {
+                    console.log(textStatus)
+                }
+            });
+        }
+
+        $('.PlannedDate').datepicker({
+            dateFormat: "M d,y"
+        });
+
+
+    });
+
+</script>
+
+<script>
+
+</script>
+<!-- Update Daily Table -->
+<script>
+
+    function isFirstRowExist(tRow) {
+        try {
+            if (tRow.find('[name="taskName_0"]').attr('name') == "taskName_0") {
+                console.log(tRow.find('[name="taskName_0"]').attr('name'));
+                return true;
+            }
+        } catch (err) {
+            alert(err);
+            return false;
+        }
+        return false;
+    }
+
+    //Creating a new row to add as the default row is not available
+    function createFirstRow() {
+
+        newRow = $('<tr></tr>', {
+            class: 'dailyTaskRow',
+            id: 'dailyTaskRow_0'
+        });
+        taskName = $('<input/>', {
+            type: 'text',
+            id: 'taskName_0',
+            class: 'textArea',
+            size: '50',
+            name: 'taskName_0'
+        });
+        taskName.attr("size", '50');
+
+        td0 = $('<td></td>');
+        taskName.appendTo(td0);
+        td0.appendTo(newRow)
+
+        Reason = $('<textarea/>', {
+            type: 'textarea',
+            id: 'Reason_0',
+            class: 'textArea',
+            rows: '4',
+            cols: '30',
+            name: 'Reason_0'
+        });
+        td1 = $('<td></td>');
+        Reason.appendTo(td1);
+        td1.appendTo(newRow)
+
+        Duration = $('<input/>', {
+            type: 'text',
+            id: 'Duration_0',
+            class: 'textArea',
+            size: '2',
+            name: 'Duration_0'
+        });
+        Duration.attr("size", '2');
+        td2 = $('<td></td>');
+        Duration.appendTo(td2);
+        td2.appendTo(newRow)
+
+        PlannedDate = $('<input/>', {
+            type: 'text',
+            id: 'PlannedDate_0',
+            class: 'textArea PlannedDate',
+            size: '12',
+            name: 'PlannedDate_0',
+            readonly: 'true'
+        });
+        PlannedDate.attr("size", '12');
+        td3 = $('<td></td>');
+        PlannedDate.appendTo(td3);
+        td3.appendTo(newRow)
+
+        Leverage = $('<textarea/>', {
+            type: 'textarea',
+            id: 'leverage_0',
+            class: 'textArea',
+            rows: '1',
+            cols: '20',
+            name: 'Leverage_0'
+        });
+        td4 = $('<td></td>');
+        Leverage.appendTo(td4);
+        td4.appendTo(newRow)
+
+
+        Priority = $('<input/>', {
+            type: 'text',
+            id: 'Priority_0',
+            class: 'textArea',
+            size: '2',
+            name: 'Priority_0'
+        });
+        Priority.attr("size", '2');
+        td5 = $('<td></td>');
+        Priority.appendTo(td5);
+        td5.appendTo(newRow)
+
+
+
+        console.log("createFirstRow -" + newRow.find('[name="taskName_0"]').attr('name'));
+        return newRow;
+    }
+
+    function updateTasks(JSONdata) {
+
+        var tRow = $("#dailyTaskRow_0");
+        var tBody = $("#dailyTaskTableBody");
+        var tHead = $("#dailyTaskTableHead");
+        var table = $(".widgetTable");
+
+        var newTBody;
+        try {
+            var incr = 0;
+            table.empty();
+            newTBody = $('<tbody></tbody>', {
+                class: 'dailyTaskTableBody'
+            });
+            if (!isFirstRowExist(tRow))
+                tRow = createFirstRow()
+
+
+            var newRow = tRow.clone(true);
+            console.log("updateTasks -" + JSONdata);
+
+            $.each(JSONdata, function (index, item) {
+
+                var _tempRow = newRow.clone();
+                var plannedDate = (item.PlannedDate.indexOf("Date") > 0) ? item.PlannedDate : "\/Date(" + new Date(item.PlannedDate).valueOf() + ")\/";
+                console.log("updateTasks -" + plannedDate);
+                _tempRow.attr("id", "dailyTaskRow_" + incr);
+                _tempRow.find('[name="taskName_0"]').val(item.Name).attr("id", "taskName_" + incr).attr("name", "taskName_" + incr);
+                _tempRow.find('[name="Reason_0"]').val(item.Reason).attr("id", "Reason_" + incr).attr("name", "Reason_" + incr);
+                _tempRow.find('[name="Duration_0"]').val(item.Duration).attr("id", "Duration_" + incr).attr("name", "Duration_" + incr);
+                _tempRow.find('[name="PlannedDate_0"]').val($.datepicker.formatDate('M dd, y', new Date(parseInt(plannedDate.substr(6))))).attr("id", "PlannedDate_" + incr).attr("name", "PlannedDate_" + incr);
+                _tempRow.find('[name="PlannedDate_' + incr + '"]').removeClass('hasDatepicker').datepicker();
+                _tempRow.find('[name="Leverage_0"]').val(item.Leverage).attr("id", "Leverage_" + incr).attr("name", "Leverage_" + incr);
+                _tempRow.find('[name="Priority_0"]').val(item.Priority).attr("id", "Priority_" + incr).attr("name", "Priority_" + incr);
+                _tempRow.appendTo(newTBody);
+                incr += 1;
+            });
+            tHead.appendTo(table);
+            newTBody.appendTo(table);
+        } catch (err) {
+            alert(err);
+        }
+    }
+
+</script>
+<!-- Adding a new Task -->
+<script>
+    function AddTask() {
+        var taskName = $("#addtask").val();
+        var projectID = $("#projectName").val();
+        var projectName = $("#projectName option:selected").text();
+
+        // var taskObject = createJSONTask(taskName, -1, projectID, projectName, "\/Date(" + new Date($("#pickedDate").val()).valueOf() + ")\/", '00:00-00:00', 0, 'h', '', '', '', '', '0');
+        console.log('$("#pickedDate").val() - '+$("#pickedDate").val());
+        var taskObject = createJSONTask(taskName, -1, projectID, projectName, new Date($("#pickedDate").val()), '00:00-00:00', 0, 'h', '', '', '', '', '0');
+        var JSONString = createJSONArray(taskObject);
+        console.log(JSONString);
+        if (updateTaskToServer(taskObject)) {
+            updateTasks($.parseJSON(JSONString));
+        }
+
+    }
+
+
+    function createJSONTask(taskName, ID, projectID, projectName, PlannedDate, ScheduledTime, Duration, DurationMessure, DurationDisplay, Leverage, Reason, Priority, PriorityID) {
+
+        taskObject = new Object();
+        taskObject.Name = taskName;
+        taskObject.ID = ID;
+        taskObject.projectID = projectID;
+        taskObject.projectName = projectName;
+        taskObject.PlannedDate = PlannedDate;
+        taskObject.ScheduledTime = ScheduledTime;
+        taskObject.Duration = Duration;
+        taskObject.DurationMessure = DurationMessure;
+        taskObject.DurationDisplay = DurationDisplay;
+        taskObject.Leverage = Leverage;
+        taskObject.Reason = Reason;
+        taskObject.Priority = Priority;
+        taskObject.PriorityID = PriorityID;
+        taskObject.userID = "1";
+        return taskObject;
+
+
+    }
+
+    function createJSONArray(taskObject) {
+        if (JSONArray.length == 0) {
+            JSONArray = new Array();
+        }
+        JSONArray.push(taskObject);
+        return (JSON.stringify(JSONArray));
+    }
+
+    function updateTaskToServer(taskObject) {
+        console.log("Inside Add Task to Server...");
+
+
+        $.ajax({
+            url: taskURL + "?method=addTask",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(taskObject),
+            dataType: 'json',
+            cache: false,
+            success: function (data, textStatus, xhr) {
+                console.log(textStatus);
+                return true;
+
+            },
+            error: function (data, textStatus, errorThrown) {
+                console.log(textStatus);
+                return true;
+            }
+        });
+        return true;
+    }
+      </script>
+<div class="dailyPlanPane">
+  <fieldset class="widgetWindow">
+    <div class="widgetHeader">&nbsp;&nbsp;Daily Plan for <span id="newlyPickedDate">@DateTime.Now.ToString("ddd, MMMM dd, yyyy")</span></div>
+           
+            <div class="fieldSelectorWidget">
+                <a href="#" id="Today">Today </a>
+                ,<a href="#" id="Tomorrow">Tomorrow </a>
+                ,<a href="#" id="DayAfter">Day After </a>
+                ,<a href="#" id="Daily">Daily </a>
+                ,<a href="#" id="Weekly">Weekly </a>
+                ,<a href="#" id="Monthly">Monthly </a>
+               
+
+
+            </div>
+      
+
+            <div class="fieldSelectorWidget">
+                 @Html.TextBox("newTask","Add a Task",new { size = "60",id = "addtask"})
+                 @Html.DropDownList("Shownext",projectTypes,new {id = "projectName"})
+                 <input type="button" value="Add" id="Add">
+            </div>
+            <div class="datepicker1">@Html.Hidden("PickedDate","PickedDate",new {id="pickedDate"})</div>
+            <div class="widgetTableDiv">
+                <table class="widgetTable">
+                    <thead id="dailyTaskTableHead">
+                       <tr>
+                         <th>Result</th>
+                         <th>Reason</th>
+                         <th>Est.</th>
+                         <th>Due</th>
+                         <th>Support</th>
+                         <th>Imp</th>        
+                       </tr>
+                    </thead>
+                    <tbody class="dailyTaskTableBody" id="dailyTaskTableBody">
+                        <!-- readonly="readonly",-->
+                        @{
+                            int i = 0;
+                        }
+
+                        @foreach(var task in currentDayTasks){
+                            <tr class="dailyTaskRow" id="dailyTaskRow_0">
+                                <td>@Html.TextBox("taskName_"+i,task.Name,new { size = "50",@class="textArea",id="taskName",@onFocusOut="updateJSONAray(this,"+i+",'taskName')"})</td>
+                                <td>@Html.TextArea("Reason_"+i,@task.Reason,new { rows = "4",cols="30",@class="textArea",@onFocusOut="updateJSONAray(this,"+i+",'Reason')"})</td>
+                                <td>@Html.TextBox("Duration_"+i,@task.Duration,new { size = "2",@class="textArea"})</td>
+                                <td>@Html.TextBox("PlannedDate_"+i,@task.PlannedDate.ToString("MMM dd, yy"),new { size = "12",@class="textArea PlannedDate",id="PlannedDate_"+i,@readonly="true"})</td>
+                                <td>@Html.TextArea("Leverage_"+i,@task.Leverage,new { cols = "20",rows="1",@class="textArea",id="leverage_"+i})</td>
+                                <td>@Html.TextBox("Priority_"+i,@task.Priority,new { size = "2",@class="textArea",id="Priority_"+i})</td>
+
+                            </tr> 
+                            i++;
+                            <script>
+
+                                 createJSONArray(createJSONTask('@task.Name','@task.ID', '@task.ProjectID', '@task.projectName', "\/Date(" + new Date("@task.PlannedDate").valueOf() + ")\/", '@task.ScheduledTime', '@task.Duration', '@task.DurationMessure', '@task.DurationDisplay', '@task.Leverage', '@task.Reason', '@task.Priority', '@task.priorityID'));
+
+
+                                 function updateJSONAray(obj,id,name){
+                                    console.log(id)
+                                   console.log(JSON.stringify(JSONArray));
+                                   JSONArray[id].Reason = $(obj).val();
+                                }
+                            </script>
+                        }
+                    </tbody>
+                </table>
+        </div>
+      
+      
+       <div style="float: right; margin-right: 12px; margin-bottom: 3px;">
+        <form action="DailyPlan" method="post">
+             <input type="button" id="Schedule" value="Schedule" onclick="top.location='DailySchedule'">  
+             <input type="button" id="Gratitude" value="Gratitude Hall">
+        </form>
+    </div>
+</fieldset>
+</div>
+
