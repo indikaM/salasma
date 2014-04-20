@@ -24,7 +24,7 @@
         var dayAfterDateString = '@DateTime.Now.AddDays(2).ToString("ddd, MMMM dd, yyyy")';
         var JSONArray = new Array();  //Created as a global Array to hold the newly created Tasks
         var taskObject = null;
-        //method=getTodaysTasks&date=2014-03-15
+
 
 </script>
 
@@ -177,10 +177,10 @@
             type: 'text',
             id: 'taskName_0',
             class: 'textArea',
-            size: '50',
+            size: '60',
             name: 'taskName_0'
         });
-        taskName.attr("size", '50');
+        taskName.attr("size", '60');
 
         td0 = $('<td></td>');
         taskName.appendTo(td0);
@@ -415,7 +415,7 @@
 
                         @foreach(var task in currentDayTasks){
                             <tr class="dailyTaskRow" id="dailyTaskRow_0">
-                                <td>@Html.TextBox("taskName_"+i,task.Name,new { size = "50",@class="textArea",id="taskName",@onFocusOut="updateJSONAray(this,"+i+",'taskName')"})</td>
+                                <td>@Html.TextBox("taskName_"+i,task.Name,new { size = "60",@class="textArea",id="taskName",@onFocusOut="updateJSONAray(this,"+i+",'taskName')"})</td>
                                 <td>@Html.TextArea("Reason_"+i,@task.Reason,new { rows = "4",cols="30",@class="textArea",@onFocusOut="updateJSONAray(this,"+i+",'Reason')"})</td>
                                 <td>@Html.TextBox("Duration_"+i,@task.Duration,new { size = "2",@class="textArea"})</td>
                                 <td>@Html.TextBox("PlannedDate_"+i,@task.PlannedDate.ToString("MMM dd, yy"),new { size = "12",@class="textArea PlannedDate",id="PlannedDate_"+i,@readonly="true"})</td>

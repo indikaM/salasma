@@ -173,7 +173,7 @@ public class Service
             SQL =   "Insert into Task (`Name`,`UserProjectID`,`PlannedDate`,`ScheduledTime`,`Duration`,`DurationMessure`, "+
                     "`DurationDisplay`,`Leverage`,`Reason`,`Priority`,`userID`) "+
                     "values "+
-                    "('"+task.Name+
+                    "('"+task.Name.Replace("'","\\'").Replace('"','\"')+
                     "','"+GetUserProject(task.userID,task.ProjectID).ID+
                     " ','"+String.Format("{0:yyyy-MM-dd 00:00:00}",task.PlannedDate)+
                     " ','"+task.ScheduledTime+
@@ -181,7 +181,7 @@ public class Service
                     " ','"+task.DurationMessure+
                     "','"+task.DurationDisplay+
                     " ','"+task.Leverage+
-                    " ','"+task.Reason+
+                    " ','"+task.Reason.Replace("'","\\'").Replace('"','\"')+
                     " ','"+task.Priority+
                     " ','"+task.userID+"') ";
 
