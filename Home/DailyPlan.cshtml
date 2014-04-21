@@ -130,7 +130,7 @@
                     //JSONArray - Need to clear here;
                     JSONArray.length = 0;
                     JSONArray = $.merge(data, JSONArray);
-                    updateTasks(data);
+                    updateTasksList(data);
                 },
                 error: function (data, textStatus, errorThrown) {
                     console.log(textStatus)
@@ -246,15 +246,17 @@
         Priority.attr("size", '2');
         td5 = $('<td></td>');
         Priority.appendTo(td5);
-        td5.appendTo(newRow)
+        td5.appendTo(newRow);
 
+        td6 = $("<td><a href=\"javascript:updateTask('.taskUpdate_0')\" id=\"taskUpdate_0\">Update</a>|<a href=\"javascript:removeTask(this)#\" id=\"taskRemove_0\">Remove</a></td>");
+        td6.appendTo(newRow);
 
 
         console.log("createFirstRow -" + newRow.find('[name="taskName_0"]').attr('name'));
         return newRow;
     }
 
-    function updateTasks(JSONdata) {
+    function updateTasksList(JSONdata) {
 
         var tRow = $("#dailyTaskRow_0");
         var tBody = $("#dailyTaskTableBody");
@@ -273,13 +275,13 @@
 
 
             var newRow = tRow.clone(true);
-            console.log("updateTasks -" + JSONdata);
+            console.log("updateTasksList -" + JSONdata);
 
             $.each(JSONdata, function (index, item) {
 
                 var _tempRow = newRow.clone();
                 var plannedDate = (item.PlannedDate.indexOf("Date") > 0) ? item.PlannedDate : "\/Date(" + new Date(item.PlannedDate).valueOf() + ")\/";
-                console.log("updateTasks -" + plannedDate);
+                console.log("updateTasksList -" + plannedDate);
                 _tempRow.attr("id", "dailyTaskRow_" + incr);
                 _tempRow.find('[name="taskName_0"]').val(item.Name).attr("id", "taskName_" + incr).attr("name", "taskName_" + incr);
                 _tempRow.find('[name="Reason_0"]').val(item.Reason).attr("id", "Reason_" + incr).attr("name", "Reason_" + incr);
@@ -312,7 +314,7 @@
         var JSONString = createJSONArray(taskObject);
         console.log(JSONString);
         if (updateTaskToServer(taskObject)) {
-            updateTasks($.parseJSON(JSONString));
+            updateTasksList($.parseJSON(JSONString));
         }
 
     }
@@ -346,6 +348,14 @@
         }
         JSONArray.push(taskObject);
         return (JSON.stringify(JSONArray));
+    }
+
+    function updateTask(Task) {
+        console.log($(Task).attr("id").val());
+    }
+
+    function removeTask(Task) {
+        console.log(Task.attrs("id").val());
     }
 
     function updateTaskToServer(taskObject) {
@@ -429,7 +439,7 @@
                                 <td>@Html.TextBox("PlannedDate_"+i,@task.PlannedDate.ToString("MMM dd, yy"),new { size = "12",@class="textArea PlannedDate",id="PlannedDate_"+i,@readonly="true"})</td>
                                 <td>@Html.TextArea("Leverage_"+i,@task.Leverage,new { cols = "20",rows="1",@class="textArea",id="leverage_"+i})</td>
                                 <td>@Html.TextBox("Priority_"+i,@task.Priority,new { size = "2",@class="textArea",id="Priority_"+i})</td>
-                                <td><a href="#">Update</a>|<a href="#">Remove</a></td>
+                                <td><a href="javascript:updateTask(this)" id="taskUpdate">Update</a>|<a href="javascript:removeTask(this)" id="taskRemove">Remove</a></td>
 
                             </tr> 
                             i++;
