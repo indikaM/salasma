@@ -177,10 +177,10 @@
             type: 'text',
             id: 'taskName_0',
             class: 'textArea',
-            size: '60',
+            size: '50',
             name: 'taskName_0'
         });
-        taskName.attr("size", '60');
+        taskName.attr("size", '50');
 
         td0 = $('<td></td>');
         taskName.appendTo(td0);
@@ -307,7 +307,7 @@
         var projectName = $("#projectName option:selected").text();
 
         // var taskObject = createJSONTask(taskName, -1, projectID, projectName, "\/Date(" + new Date($("#pickedDate").val()).valueOf() + ")\/", '00:00-00:00', 0, 'h', '', '', '', '', '0');
-        console.log('$("#pickedDate").val() - '+$("#pickedDate").val());
+        console.log('$("#pickedDate").val() - ' + $("#pickedDate").val());
         var taskObject = createJSONTask(taskName, -1, projectID, projectName, new Date($("#pickedDate").val()), '00:00-00:00', 0, 'h', '', '', '', '', '0');
         var JSONString = createJSONArray(taskObject);
         console.log(JSONString);
@@ -361,6 +361,8 @@
             cache: false,
             success: function (data, textStatus, xhr) {
                 console.log(textStatus);
+                if (data != "1")
+                    printErrorMessage(data);
                 return true;
 
             },
@@ -371,7 +373,12 @@
         });
         return true;
     }
+    function printErrorMessage(output) {
+        alert(output);
+    } 
       </script>
+<div id="errorPane">
+</div>
 <div class="dailyPlanPane">
   <fieldset class="widgetWindow">
     <div class="widgetHeader">&nbsp;&nbsp;Daily Plan for <span id="newlyPickedDate">@DateTime.Now.ToString("ddd, MMMM dd, yyyy")</span></div>
@@ -404,7 +411,8 @@
                          <th>Est.</th>
                          <th>Due</th>
                          <th>Support</th>
-                         <th>Imp</th>        
+                         <th>Imp</th> 
+                         <th>Action</th>         
                        </tr>
                     </thead>
                     <tbody class="dailyTaskTableBody" id="dailyTaskTableBody">
@@ -415,12 +423,13 @@
 
                         @foreach(var task in currentDayTasks){
                             <tr class="dailyTaskRow" id="dailyTaskRow_0">
-                                <td>@Html.TextBox("taskName_"+i,task.Name,new { size = "60",@class="textArea",id="taskName",@onFocusOut="updateJSONAray(this,"+i+",'taskName')"})</td>
+                                <td>@Html.TextBox("taskName_"+i,task.Name,new { size = "50",@class="textArea",id="taskName",@onFocusOut="updateJSONAray(this,"+i+",'taskName')"})</td>
                                 <td>@Html.TextArea("Reason_"+i,@task.Reason,new { rows = "4",cols="30",@class="textArea",@onFocusOut="updateJSONAray(this,"+i+",'Reason')"})</td>
                                 <td>@Html.TextBox("Duration_"+i,@task.Duration,new { size = "2",@class="textArea"})</td>
                                 <td>@Html.TextBox("PlannedDate_"+i,@task.PlannedDate.ToString("MMM dd, yy"),new { size = "12",@class="textArea PlannedDate",id="PlannedDate_"+i,@readonly="true"})</td>
                                 <td>@Html.TextArea("Leverage_"+i,@task.Leverage,new { cols = "20",rows="1",@class="textArea",id="leverage_"+i})</td>
                                 <td>@Html.TextBox("Priority_"+i,@task.Priority,new { size = "2",@class="textArea",id="Priority_"+i})</td>
+                                <td><a href="#">Edit</a> / <a href="#">Remove</a></td>
 
                             </tr> 
                             i++;
