@@ -168,7 +168,8 @@ public class Service
        return(ProjectList);
     }
     
-    public void SaveTask(Task task){
+    public int SaveTask(Task task){
+        int id = -1;
         try{
             SQL =   "Insert into Task (`Name`,`UserProjectID`,`PlannedDate`,`ScheduledTime`,`Duration`,`DurationMessure`, "+
                     "`DurationDisplay`,`Leverage`,`Reason`,`Priority`,`userID`) "+
@@ -186,8 +187,9 @@ public class Service
                     " ','"+task.userID+"') ";
 
            logger.Debug(SQL);
-           int id = _db.Execute(SQL);
+           id = _db.Execute(SQL);
            logger.Debug(id);
+
         }catch(Exception e){
             logger.Debug("Test data..."+e.Data);
             FreeConnection(); 
@@ -195,6 +197,7 @@ public class Service
         finally{
             FreeConnection();
         }
+        return id;
     }
 
     public UserProjects GetUserProject(int userID,int projectID){
