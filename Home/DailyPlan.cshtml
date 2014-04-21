@@ -381,7 +381,7 @@
 </div>
 <div class="dailyPlanPane">
   <fieldset class="widgetWindow">
-    <div class="widgetHeader">&nbsp;&nbsp;Daily Plan for <span id="newlyPickedDate">@DateTime.Now.ToString("ddd, MMMM dd, yyyy")</span></div>
+    <div class="widgetHeader">&nbsp;&nbsp;My Daily Plan for <span id="newlyPickedDate">@DateTime.Now.ToString("ddd, MMMM dd, yyyy")</span></div>
            
             <div class="fieldSelectorWidget">
                 <a href="#" id="Today">Today </a>
@@ -406,8 +406,8 @@
                 <table class="widgetTable">
                     <thead id="dailyTaskTableHead">
                        <tr>
-                         <th>Result</th>
-                         <th>Reason</th>
+                         <th>My Result</th>
+                         <th>My Reason</th>
                          <th>Est.</th>
                          <th>Due</th>
                          <th>Support</th>
@@ -429,7 +429,7 @@
                                 <td>@Html.TextBox("PlannedDate_"+i,@task.PlannedDate.ToString("MMM dd, yy"),new { size = "12",@class="textArea PlannedDate",id="PlannedDate_"+i,@readonly="true"})</td>
                                 <td>@Html.TextArea("Leverage_"+i,@task.Leverage,new { cols = "20",rows="1",@class="textArea",id="leverage_"+i})</td>
                                 <td>@Html.TextBox("Priority_"+i,@task.Priority,new { size = "2",@class="textArea",id="Priority_"+i})</td>
-                                <td><a href="#">Edit</a> / <a href="#">Remove</a></td>
+                                <td><a href="#">Update</a>|<a href="#">Remove</a></td>
 
                             </tr> 
                             i++;
