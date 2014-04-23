@@ -248,7 +248,7 @@
         Priority.appendTo(td5);
         td5.appendTo(newRow);
 
-        td6 = $("<td><a href=\"javascript:updateTask('.taskUpdate_0')\" id=\"taskUpdate_0\">Update</a>|<a href=\"javascript:removeTask(this)#\" id=\"taskRemove_0\">Remove</a></td>");
+        td6 = $("<td><a id=\"#taskUpdate_0\" href=\"javascript:updateTask('#taskUpdate_0')\" >Update</a>|<a href=\"javascript:removeTask('#taskRemove_0')\" id=\"taskRemove_0\">Remove</a></td>");
         td6.appendTo(newRow);
 
 
@@ -290,6 +290,8 @@
                 _tempRow.find('[name="PlannedDate_' + incr + '"]').removeClass('hasDatepicker').datepicker();
                 _tempRow.find('[name="Leverage_0"]').val(item.Leverage).attr("id", "Leverage_" + incr).attr("name", "Leverage_" + incr);
                 _tempRow.find('[name="Priority_0"]').val(item.Priority).attr("id", "Priority_" + incr).attr("name", "Priority_" + incr);
+                _tempRow.find('[id="taskUpdate_0"]').attr("id", "taskUpdate_" + incr).attr("href","javascript:updateTask('#taskUpdate_"+incr+"')");
+                _tempRow.find('[id="taskRemove_0"]').attr("id", "taskRemove_" + incr).attr("href","javascript:updateTask('#taskRemove_"+incr+"')");
                 _tempRow.appendTo(newTBody);
                 incr += 1;
             });
@@ -351,7 +353,8 @@
     }
 
     function updateTask(Task) {
-        console.log($(Task).attr("id").val());
+        console.log($(Task).attr("id"));
+       
     }
 
     function removeTask(Task) {
@@ -439,7 +442,7 @@
                                 <td>@Html.TextBox("PlannedDate_"+i,@task.PlannedDate.ToString("MMM dd, yy"),new { size = "12",@class="textArea PlannedDate",id="PlannedDate_"+i,@readonly="true"})</td>
                                 <td>@Html.TextArea("Leverage_"+i,@task.Leverage,new { cols = "20",rows="1",@class="textArea",id="leverage_"+i})</td>
                                 <td>@Html.TextBox("Priority_"+i,@task.Priority,new { size = "2",@class="textArea",id="Priority_"+i})</td>
-                                <td><a href="javascript:updateTask(this)" id="taskUpdate">Update</a>|<a href="javascript:removeTask(this)" id="taskRemove">Remove</a></td>
+                                <td><a href="javascript:updateTask('#taskUpdate_0')" id="taskUpdate_0">Update</a>|<a href="javascript:removeTask('#taskRemove_0')" id="taskRemove_0">Remove</a></td>
 
                             </tr> 
                             i++;
