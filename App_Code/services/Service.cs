@@ -106,7 +106,7 @@ public class Service
            var Results = _db.Query(SQL);
 
            foreach(var result in Results){
-               Task Task = new Task(result.Name,result.ProjectName,result.PlannedDate,result.ScheduledTime,
+               Task Task = new Task(result.ID,result.Name,result.ProjectName,result.PlannedDate,result.ScheduledTime,
                                     result.DurationDisplay,result.Leverage,result.Reason,result.Priority,result.userID);
                TaskList.Add(Task);
            }
@@ -140,7 +140,7 @@ public class Service
             GetConnection();
             var Results = _db.Query(SQL);
             foreach(var result in Results){
-               Task Task = new Task(result.Name,result.ProjectName,result.PlannedDate,result.ScheduledTime,
+               Task Task = new Task(result.ID,result.Name,result.ProjectName,result.PlannedDate,result.ScheduledTime,
                                     result.DurationDisplay,result.Leverage,result.Reason,result.Priority,result.userID);
                TaskList.Add(Task);
            }    
@@ -200,6 +200,35 @@ public class Service
         return id;
     }
 
+    public int UpdateTask(Task task){
+        int id = -1;
+        try{
+            SQL =   "Update  Task set  "+
+                    " `Name` = ('"+task.Name.Replace("'","\\'").Replace('"','\"')+
+                    "',`UserProjectID` = '"+GetUserProject(task.userID,task.ProjectID).ID+
+                    " ',`PlannedDate` = '"+String.Format("{0:yyyy-MM-dd 00:00:00}",task.PlannedDate)+
+                    " ',`ScheduledTime` = '"+task.ScheduledTime+
+                    " ',`Duration` = '"+task.Duration+
+                    " ',`DurationMessure` = '"+task.DurationMessure+
+                    "',`DurationDisplay` = '"+task.DurationDisplay+
+                    " ',`Leverage` = '"+task.Leverage+
+                    " ',`Reason` = '"+task.Reason.Replace("'","\\'").Replace('"','\"')+
+                    " ',`Priority` = '"+task.Priority+
+                    " ',`userID` = '"+task.userID+"' where id=`"+task.ID+"`";
+
+           logger.Debug(SQL);
+           id = _db.Execute(SQL);
+           logger.Debug(id);
+
+        }catch(Exception e){
+            logger.Debug("Test data..."+e.Data);
+            FreeConnection(); 
+        }
+        finally{
+            FreeConnection();
+        }
+        return id;
+    }
     public UserProjects GetUserProject(int userID,int projectID){
         UserProjects userProject = null;
         List<Project> ProjectList = new List<Project>();

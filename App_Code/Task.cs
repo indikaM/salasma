@@ -9,9 +9,10 @@ using System.Web;
 /// </summary>
 public class Task 
 {
-    public Task(string Name,string projectName,DateTime PlannedDate,string ScheduledTime,
+    public Task(int ID,string Name,string projectName,DateTime PlannedDate,string ScheduledTime,
                 string DurationDisplay, string Leverage, string Reason, string Priority,int userID) 
     {
+        this.ID = ID;
         this.Name=Name;
         this.projectName = projectName;
         this.PlannedDate=PlannedDate;

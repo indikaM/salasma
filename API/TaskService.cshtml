@@ -1,7 +1,7 @@
 ﻿
-
+@using log4net;
 @{
-   
+  
 
 }
 @{
@@ -17,6 +17,8 @@
           Json.Write(getDailyTasks(), Response.Output);
         }else if(webMethod.Equals("addTask")){
           Json.Write(addTask(), Response.Output);
+        }else if(webMethod.Equals("updateTask")){
+          Json.Write(updateTask(), Response.Output);
         }
        
     }
@@ -44,9 +46,18 @@
      jsonString = sr.ReadToEnd();
      Task task =  Json.Decode<Task>(jsonString);
      return dataService.SaveTask(task).ToString();
-        
-    
  }
+
+ public string updateTask(){
+     log4net.ILog logger = log4net.LogManager.GetLogger(); 
+     System.IO.StreamReader sr = new  System.IO.StreamReader(Request.InputStream);
+     string jsonString = String.Empty;
+     jsonString = sr.ReadToEnd();
+     logger.Debug(jsonString);
+     Task task =  Json.Decode<Task>(jsonString);
+     return dataService.UpdateTask(task).ToString();
+ }
+
 }
 
 
