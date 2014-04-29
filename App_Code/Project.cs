@@ -18,6 +18,6 @@ public class Project
         this.ProjectName = ProjectName;
     }
 
-    public int ProjectID{get;set;}
+    public int ProjectID { get; set; }
     public string ProjectName {get;set;}
 }

@@ -187,6 +187,16 @@ input[type="text"]{
     float: left;
 }
 
+
+.dailyPlanPane{
+    width: 70%;
+    float: left;
+}s
+
+.taskEditPane{
+    width: 25%;
+    float: right;
+}
 .scheduleDailyPlanPane{
     width: 100%;
     float: left;

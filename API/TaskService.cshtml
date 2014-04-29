@@ -1,62 +1,100 @@
-﻿
-@using log4net;
+﻿@using log4net;
 @{
   
 
 }
 @{
     var webMethod = Request.QueryString["method"];
-    if(!webMethod.IsEmpty()){
-        if(webMethod.Equals("getTodayTasks")){
-          Json.Write(getDailyTasks(), Response.Output);
-        }else if(webMethod.Equals("getTomorrowTasks")){
-          Json.Write(getDailyTasks(), Response.Output);
-        }else if(webMethod.Equals("getDayAfterTasks")){
-          Json.Write(getDailyTasks(), Response.Output);
-        }else if(webMethod.Equals("getDailyTasks")){
-          Json.Write(getDailyTasks(), Response.Output);
-        }else if(webMethod.Equals("addTask")){
-          Json.Write(addTask(), Response.Output);
-        }else if(webMethod.Equals("updateTask")){
-          Json.Write(updateTask(), Response.Output);
+    if (!webMethod.IsEmpty())
+    {
+        if (webMethod.Equals("getTodayTasks"))
+        {
+            Json.Write(getDailyTasks(), Response.Output);
         }
-       
+        else if (webMethod.Equals("getTomorrowTasks"))
+        {
+            Json.Write(getDailyTasks(), Response.Output);
+        }
+        else if (webMethod.Equals("getDayAfterTasks"))
+        {
+            Json.Write(getDailyTasks(), Response.Output);
+        }
+        else if (webMethod.Equals("getDailyTasks"))
+        {
+            Json.Write(getDailyTasks(), Response.Output);
+        }
+        else if (webMethod.Equals("AddTask"))
+        {
+            Json.Write(addTask(), Response.Output);
+        }
+        else if (webMethod.Equals("updateTask"))
+        {
+            Json.Write(updateTask(), Response.Output);
+        }
+        else if (webMethod.Equals("RemoveTask"))
+        {
+            Json.Write(removeTask(), Response.Output);
+        }
+
     }
 }
 
 
-    
+
 @functions{
- Service dataService = new Service();
- public List <Task> getDailyTasks(){
-      var userID = Request.QueryString["userID"];
-      var passWord = Request.QueryString["passWord"];
-      var date = Request.QueryString["date"];
-      List <Task> taskList = dataService.GetTasksForSpecificDate(date);
-      if(taskList.Count==0){
-          new Task();
-      }
-      return taskList;    
- }   
+    Service dataService = new Service();
+    public List<Task> getDailyTasks()
+    {
+        var userID = Request.QueryString["userID"];
+        var passWord = Request.QueryString["passWord"];
+        var date = Request.QueryString["date"];
+        List<Task> taskList = dataService.GetTasksForSpecificDate(date);
+        if (taskList.Count == 0)
+        {
+            new Task();
+        }
+        return taskList;
+    }
 
 
- public string addTask(){
-     System.IO.StreamReader sr = new  System.IO.StreamReader(Request.InputStream);
-     string jsonString = String.Empty;
-     jsonString = sr.ReadToEnd();
-     Task task =  Json.Decode<Task>(jsonString);
-     return dataService.SaveTask(task).ToString();
- }
+    public string addTask()
+    {
+        System.IO.StreamReader sr = new System.IO.StreamReader(Request.InputStream);
+        string jsonString = String.Empty;
+        jsonString = sr.ReadToEnd();
+        Task task = Json.Decode<Task>(jsonString);
+        var result = dataService.SaveTask(task).ToString();
+        return result;
+    }
 
- public string updateTask(){
-     log4net.ILog logger = log4net.LogManager.GetLogger(); 
-     System.IO.StreamReader sr = new  System.IO.StreamReader(Request.InputStream);
-     string jsonString = String.Empty;
-     jsonString = sr.ReadToEnd();
-     logger.Debug(jsonString);
-     Task task =  Json.Decode<Task>(jsonString);
-     return dataService.UpdateTask(task).ToString();
- }
+    public string updateTask()
+    {
+
+        System.IO.StreamReader sr = new System.IO.StreamReader(Request.InputStream);
+        string jsonString = String.Empty;
+        jsonString = sr.ReadToEnd();
+        Task task = Json.Decode<Task>(jsonString);
+        int taskID = task.ID;
+        if (dataService.UpdateTask(task) > -1)
+        {
+            return "1";
+        }
+        else
+        {
+            return "-1";
+        }
+
+    }
+
+    public string removeTask()
+    {
+        System.IO.StreamReader sr = new System.IO.StreamReader(Request.InputStream);
+        string jsonString = String.Empty;
+        jsonString = sr.ReadToEnd();
+        Task task = Json.Decode<Task>(jsonString);
+        int taskID = task.ID;
+        return (dataService.RemoveTask(task)).ToString();
+    }
 
 }
 
