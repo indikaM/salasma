@@ -248,7 +248,7 @@
         Priority.appendTo(td5);
         td5.appendTo(newRow);
 
-        td6 = $("<td><a id=\"taskUpdate_0\" href=\"javascript:updateTask('#taskUpdate_0')\" data-index=\"0\" >Update</a>|<a href=\"javascript:removeTask('#taskRemove_0')\" id=\"taskRemove_0\" data-index=\"0\">Remove</a></td>");
+        td6 = $("<td><a id=\"taskEdit_0\" href=\"javascript:editTask('#taskEdit_0')\" data-index=\"0\" ><img alt='Edit' src='/Icons/pencil.png' width='20px' height='20px'></a>|<a id=\"taskUpdate_0\" href=\"javascript:updateTask('#taskUpdate_0')\" data-index=\"0\" ><img alt='Update' src='/Icons/cnr_update.png' width='20px' height='20px'></a>|<a href=\"javascript:removeTask('#taskRemove_0')\" id=\"taskRemove_0\" data-index=\"0\"><img alt='Delete' src='/Icons/button_delete_green.png' width='20px' height='20px'></a></td>");
         td6.appendTo(newRow);
 
 
@@ -318,6 +318,7 @@
         _tempRow.find('[name="PlannedDate_' + incr + '"]').removeClass('hasDatepicker').datepicker();
         _tempRow.find('[name="Leverage_0"]').val(item.Leverage).attr("id", "Leverage_" + incr).attr("name", "Leverage_" + incr);
         _tempRow.find('[name="Priority_0"]').val(item.Priority).attr("id", "Priority_" + incr).attr("name", "Priority_" + incr);
+         _tempRow.find('[id="taskEdit_0"]').attr("id", "taskEdit_" + incr).attr("href", "javascript:editTask('#taskEdit_" + incr + "')").attr("data-index", incr);
         _tempRow.find('[id="taskUpdate_0"]').attr("id", "taskUpdate_" + incr).attr("href", "javascript:updateTask('#taskUpdate_" + incr + "')").attr("data-index", incr);
         _tempRow.find('[id="taskRemove_0"]').attr("id", "taskRemove_" + incr).attr("href", "javascript:removeTask('#taskRemove_" + incr + "')").attr("data-index", incr);
         return _tempRow;
@@ -373,6 +374,24 @@
             addNewTaskToGrid($.parseJSON(JSONString));
         }
 
+    }
+
+    function editTask(Task) {
+        index = $(Task).attr("data-index");
+        console.log($(Task).attr("id"));
+        console.log(index);
+        console.log(JSONArray[$(Task).attr("data-index")].ID);
+        taskToUpdate = JSONArray[index];
+        var dailyPlanPane = $(".dailyPlanPane");
+        dailyPlanPane.css("width", "70%");
+
+        var taskEditPane = $(".taskEditPane");
+        try { taskEditPane.removeAttr("hidden"); } catch (e) { console.log(e); }
+        
+
+        //taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
+        //taskToUpdate.PlannedDate = $.datepicker.formatDate('yy-m-dd', new Date(parseInt(taskToUpdate.PlannedDate.substr(6))))
+        //updateTaskToServer(taskToUpdate, "updateTask", index);
     }
 
     function updateTask(Task) {
@@ -458,7 +477,7 @@
 
 
     function updateTaskToServer(taskObject, action, index) {
-        console.log("taskObject.Name - "+taskObject.Name);
+        console.log("taskObject.Name - " + taskObject.Name);
         console.log("Inside updateTaskToServer with action=" + taskURL + "?method=" + action + "...");
 
         console.log(JSON.stringify(taskObject));
@@ -534,7 +553,7 @@
       
 
             <div class="fieldSelectorWidget">
-                 @Html.TextBox("newTask","Add a Task",new { size = "60",id = "addtask"})
+                 @Html.TextBox("newTask","Add a Task",new { size = "50",id = "addtask"})
                  @Html.DropDownList("Shownext",projectTypes,new {id = "projectName"})
                  <input type="button" value="Add" id="Add">
             </div>
@@ -560,13 +579,13 @@
 
                         @foreach(var task in currentDayTasks){
                             <tr class="dailyTaskRow_@i" id="dailyTaskRow_@i">
-                                <td>@Html.TextBox("taskName_"+i,task.Name,new { size = "50",@class="textArea",id="taskName_"+i,@onFocusOut="updateJSONAray(this,"+i+",'taskName')"})
-                                @Html.Hidden("Reason_"+i,@task.Reason,new { rows = "4",cols="30",@class="textArea",@onFocusOut="updateJSONAray(this,"+i+",'Reason')"})</td>
+                                <td>@Html.TextBox("taskName_"+i,task.Name,new { size = "40",@class="textArea",id="taskName_"+i,@onFocusOut="updateJSONAray(this,"+i+",'taskName')"})<!--/td>
+                               <td>--> @Html.Hidden("Reason_"+i,@task.Reason,new { rows = "4",cols="30",@class="textArea",@onFocusOut="updateJSONAray(this,"+i+",'Reason')"})</td>
                                 <td>@Html.TextBox("Duration_"+i,@task.DurationDisplay,new { size = "2",@class="textArea"})</td>
-                                <td>@Html.TextBox("PlannedDate_"+i,@task.PlannedDate.ToString("MMM dd, yy"),new { size = "12",@class="textArea PlannedDate",id="PlannedDate_"+i,@readonly="true"})
-                                @Html.Hidden("Leverage_"+i,@task.Leverage,new { cols = "20",rows="1",@class="textArea",id="Leverage_"+i})</td>
+                                <td>@Html.TextBox("PlannedDate_"+i,@task.PlannedDate.ToString("MMM dd, yy"),new { size = "12",@class="textArea PlannedDate",id="PlannedDate_"+i,@readonly="true"})<!--/td>
+                               <td>--> @Html.Hidden("Leverage_"+i,@task.Leverage,new { cols = "20",rows="1",@class="textArea",id="Leverage_"+i})</td>
                                 <td>@Html.TextBox("Priority_"+i,@task.Priority,new { size = "2",@class="textArea",id="Priority_"+i})</td>
-                                <td><a href="javascript:updateTask('#taskUpdate_@i')" id="taskUpdate_@i" data-index="@i" >Update</a>|<a href="javascript:removeTask('#taskRemove_@i')" id="taskRemove_@i" data-index="@i">Remove</a></td>
+                                <td><a href="javascript:editTask('#taskEdit_@i')" id="taskEdit_@i" data-index="@i" ><img alt="Edit" src='/Icons/pencil.png' width="20px" height="20px"></a>|<a href="javascript:updateTask('#taskUpdate_@i')" id="taskUpdate_@i" data-index="@i" ><img alt="Update" src='/Icons/cnr_update.png' width="20px" height="20px"></a>|<a href="javascript:removeTask('#taskRemove_@i')" id="taskRemove_@i" data-index="@i"><img alt="Delete" src='/Icons/button_delete_green.png' width="20px" height="20px"></a></td>
 
                             </tr> 
                             i++;
@@ -595,10 +614,24 @@
     </div>
 </fieldset>
 </div>
-  
-     <div class="taskEditPane">
-         <fieldset>Edit Task Info
-         </fieldset>
+ <div class="taskEditPane" hidden="hidden">
+
+            
+             <fieldset class="widgetWindow">
+                 <div class="widgetHeader">&nbsp;&nbsp;Edit Task</div>
+                 
+                 <div class="taskEditSpan">
+                 <b>Create Edit / Delete options to Task Creation</b></br></br>
+                 <div style="width: 100%; padding-top: 2px;"> <div style="width:80px;float: left;">Reason : </div> <TEXTAREA rows="5" cols="20" style="float: left;border: 1px dashed"></TEXTAREA></div></br>
+                 <div style="float:left;width: 100%;padding-top: 2px;"><div style="width:80px;float: left;">Project: </div> @Html.DropDownList("Shownext",projectTypes,new {id = "projectNames", style="float: left;border: 0px solid;margin-left:0px;"})</div></br>
+                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Due: </div><INPUT TYPE="text" SIZE="10" style="float: left;border: 0px solid;"></div></br>
+                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Time Estimate: </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 0px solid;"></div></br>
+                 <div style="width: 100%; padding-top: 2px;"> <div style="width:80px;float: left;">Supported By: </div> <TEXTAREA rows="5" cols="20" style="float: left;border: 0px solid;"></TEXTAREA></div></br>
+                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Priority: </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 0px solid;"></div></br>
+                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Scheduled Time : </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 0px solid;"></div></br>
+                 <div style="float: right; margin-right: 5px;"><a href="#" >Update</a></div>
+                 </div>
+             </fieldset>   
      </div>
 </div>
   
