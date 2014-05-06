@@ -386,8 +386,9 @@
         dailyPlanPane.css("width", "70%");
 
         var taskEditPane = $(".taskEditPane");
-        try { taskEditPane.removeAttr("hidden"); } catch (e) { console.log(e); }
-        
+        taskEditPane.removeAttr("hidden");
+        taskToUpdate = JSONArray[index];
+        setEditPane(taskToUpdate,index);
 
         //taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
         //taskToUpdate.PlannedDate = $.datepicker.formatDate('yy-m-dd', new Date(parseInt(taskToUpdate.PlannedDate.substr(6))))
@@ -608,8 +609,8 @@
       
        <div style="float: right; margin-right: 12px; margin-bottom: 3px;">
         <form action="DailyPlan" method="post">
-             <input type="button" id="Schedule" value="Schedule" onclick="top.location='DailySchedule'">  
-             <input type="button" id="Gratitude" value="Gratitude Hall">
+             <a href="javascript:top.location='DailySchedule'" > Schedule</a>
+             <a href="javascript:top.location='DailySchedule'" > Gratitude Hall </a>
         </form>
     </div>
 </fieldset>
@@ -621,17 +622,46 @@
                  <div class="widgetHeader">&nbsp;&nbsp;Edit Task</div>
                  
                  <div class="taskEditSpan">
-                 <b>Create Edit / Delete options to Task Creation</b></br></br>
-                 <div style="width: 100%; padding-top: 2px;"> <div style="width:80px;float: left;">Reason : </div> <TEXTAREA rows="5" cols="20" style="float: left;border: 1px dashed"></TEXTAREA></div></br>
-                 <div style="float:left;width: 100%;padding-top: 2px;"><div style="width:80px;float: left;">Project: </div> @Html.DropDownList("Shownext",projectTypes,new {id = "projectNames", style="float: left;border: 0px solid;margin-left:0px;"})</div></br>
-                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Due: </div><INPUT TYPE="text" SIZE="10" style="float: left;border: 0px solid;"></div></br>
-                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Time Estimate: </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 0px solid;"></div></br>
-                 <div style="width: 100%; padding-top: 2px;"> <div style="width:80px;float: left;">Supported By: </div> <TEXTAREA rows="5" cols="20" style="float: left;border: 0px solid;"></TEXTAREA></div></br>
-                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Priority: </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 0px solid;"></div></br>
-                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Scheduled Time : </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 0px solid;"></div></br>
-                 <div style="float: right; margin-right: 5px;"><a href="#" >Update</a></div>
+                 @Html.Hidden("hidTaskID","",new {id="hidTaskId"})
+                 <b><span id="taskName">Create Edit / Delete options to Task Creation</span></b><img alt="Edit" src='/Icons/pencil.png' width="20px" height="20px"></br></br>
+                 <div style="width: 100%; padding-top: 2px;"> <div style="width:80px;float: left;">Reason : </div> <TEXTAREA rows="5" cols="20" style="float: left;border: 1px solid #cdcdcd" id="editReason"></TEXTAREA></div></br>
+                 <div style="float:left;width: 100%;padding-top: 2px;"><div style="width:80px;float: left;">Project: </div> @Html.DropDownList("Shownext",projectTypes,new {id = "projectNames", style="float: left;border: 1px solid #cdcdcd;margin-left:0px;"})</div></br>
+                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Due: </div><INPUT TYPE="text" SIZE="10" style="float: left;border: 1px solid #cdcdcd;" id="taskDue"></div></br>
+                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Time Estimate: </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 1px solid #cdcdcd;" id="taskEstimates"></div></br>
+                 <div style="width: 100%; padding-top: 2px;"> <div style="width:80px;float: left;">Supported By: </div> <TEXTAREA rows="5" cols="20" style="float: left;border: 1px solid #cdcdcd;" id="taskSupport"></TEXTAREA></div></br>
+                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Priority: </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 1px solid #cdcdcd;" id="taskPriority"></div></br>
+                 <div style="float:left;width: 100%; padding-top: 2px;"><div style="width:80px;float: left;">Scheduled Time : </div> <INPUT TYPE="text" SIZE="10" style="float: left;border: 1px solid #cdcdcd;" id="taskSchedule"></div></br>
+                 <div style="float: right; margin-right: 5px;"><a href="javascript:updateFullTask()" >Update</a></div>
                  </div>
              </fieldset>   
      </div>
+    <script>
+        function setEditPane(taskEdit, index) {
+            $("#taskName").text(taskEdit.Name);
+            $("#editReason").val(taskEdit.Reason);
+            $("#projectNames").val(taskEdit.projectID);
+            $("#taskDue").val(taskEdit.PlannedDate);
+            $("#taskEstimates").val(taskEdit.DurationDisplay);
+            $("#taskSupport").val(taskEdit.Leverage);
+            $("#taskPriority").val(taskEdit.Priority);
+            $("#taskSchedule").val(taskEdit.ScheduledTime);
+            $("#hidTaskId").val(index);
+
+        }
+        
+        $('#taskDue').datepicker({
+            dateFormat: "M d,y"
+        });
+
+        function updateFullTask(){
+            var index = $("#hidTaskId").val();
+            console.log(index);
+            console.log(JSONArray[index]);
+            taskToUpdate = JSONArray[index];
+            taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
+            //taskToUpdate.PlannedDate = $.datepicker.formatDate('yy-m-dd', new Date(parseInt(taskToUpdate.PlannedDate.substr(6))))
+            updateTaskToServer(taskToUpdate, "updateTask", index);
+        }
+    </script>
 </div>
   
