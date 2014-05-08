@@ -27,7 +27,7 @@
         {
             Json.Write(addTask(), Response.Output);
         }
-        else if (webMethod.Equals("updateTask"))
+        else if (webMethod.ToUpper().Equals("updateTask".ToUpper()))
         {
             Json.Write(updateTask(), Response.Output);
         }

@@ -388,7 +388,7 @@
         var taskEditPane = $(".taskEditPane");
         taskEditPane.removeAttr("hidden");
         taskToUpdate = JSONArray[index];
-        setEditPane(taskToUpdate,index);
+        setEditPane(taskToUpdate, index);
 
         //taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
         //taskToUpdate.PlannedDate = $.datepicker.formatDate('yy-m-dd', new Date(parseInt(taskToUpdate.PlannedDate.substr(6))))
@@ -420,6 +420,21 @@
         Task.Priority = $("#Priority_" + index).val();
         Task.PriorityID = $("#PriorityID_" + index).val();
         var duration = $("#Duration_" + index).val();
+        setTaskDurationFromUser(Task, duration);
+        Task.DurationDisplay = $("#Duration_" + index).val();
+
+
+        console.log("Task Name ...." + Task.Name);
+        console.log("Task PlannedDate_ ...." + Task.PlannedDate);
+        console.log("Task Reason_ ...." + Task.Reason);
+        console.log("Task Duration ...." + Task.Duration);
+        console.log("Task DurationDisplay ...." + Task.DurationDisplay);
+        console.log("Task DurationMessure ...." + Task.DurationMessure);
+        console.log("Task Leverage ...." + Task.Leverage);
+        console.log("Task Priority ...." + Task.Priority);
+        return Task;
+    }
+    function setTaskDurationFromUser(Task, duration) {
         if (duration.toUpperCase().indexOf("H") > 0) {
             Task.DurationMessure = "H";
             Task.Duration = duration.substring(0, duration.toUpperCase().indexOf("H"));
@@ -444,18 +459,6 @@
             }
 
         }
-        Task.DurationDisplay = $("#Duration_" + index).val();
-
-
-        console.log("Task Name ...." + Task.Name);
-        console.log("Task PlannedDate_ ...." + Task.PlannedDate);
-        console.log("Task Reason_ ...." + Task.Reason);
-        console.log("Task Duration ...." + Task.Duration);
-        console.log("Task DurationDisplay ...." + Task.DurationDisplay);
-        console.log("Task DurationMessure ...." + Task.DurationMessure);
-        console.log("Task Leverage ...." + Task.Leverage);
-        console.log("Task Priority ...." + Task.Priority);
-        return Task;
     }
     function isAlphaNumeric(text) {
         var pattern = /^[0-9 ]+$/;
@@ -510,7 +513,7 @@
         alert(output);
     }
     function handleServerResponse(action, index, data) {
-        if (action == "UpdateTask") {
+        if (action == "updateTask") {
             console.log("UpdateTask Success....");
         } else if (action == "AddTask") {
             console.log("Index Passed in " + index);
@@ -640,25 +643,44 @@
             $("#taskName").text(taskEdit.Name);
             $("#editReason").val(taskEdit.Reason);
             $("#projectNames").val(taskEdit.projectID);
-            $("#taskDue").val(taskEdit.PlannedDate);
+            $("#taskDue").val($.datepicker.formatDate('MM dd,yy',taskEdit.PlannedDate));  
             $("#taskEstimates").val(taskEdit.DurationDisplay);
+            
             $("#taskSupport").val(taskEdit.Leverage);
             $("#taskPriority").val(taskEdit.Priority);
             $("#taskSchedule").val(taskEdit.ScheduledTime);
             $("#hidTaskId").val(index);
 
         }
-        
+
+        function setTaskAttrsFromEditPane(taskEdit, index) {
+            taskEdit.Name = $("#taskName").text();
+            taskEdit.Reason = $("#editReason").val();
+            taskEdit.projectID = $("#projectNames").val();
+            taskEdit.PlannedDate = $("#taskDue").val();
+
+            taskEdit.DurationDisplay = $("#taskEstimates").val();
+            setTaskDurationFromUser(taskEdit, $("#taskEstimates").val);
+
+            taskEdit.Leverage = $("#taskSupport").val();
+            taskEdit.Priority = $("#taskPriority").val();
+            taskEdit.ScheduledTime = $("#taskSchedule").val();
+
+            console.log("Priority - - "+taskEdit.Priority)
+        }
+
         $('#taskDue').datepicker({
             dateFormat: "M d,y"
         });
 
-        function updateFullTask(){
+        function updateFullTask() {
             var index = $("#hidTaskId").val();
             console.log(index);
             console.log(JSONArray[index]);
             taskToUpdate = JSONArray[index];
-            taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
+
+            try { setTaskAttrsFromEditPane(taskToUpdate, index); } catch (e) { console.log(e); }
+            //taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
             //taskToUpdate.PlannedDate = $.datepicker.formatDate('yy-m-dd', new Date(parseInt(taskToUpdate.PlannedDate.substr(6))))
             updateTaskToServer(taskToUpdate, "updateTask", index);
         }
