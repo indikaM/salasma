@@ -67,7 +67,7 @@
         return result;
     }
 
-    public string updateTask()
+    public Task updateTask()
     {
 
         System.IO.StreamReader sr = new System.IO.StreamReader(Request.InputStream);
@@ -75,13 +75,14 @@
         jsonString = sr.ReadToEnd();
         Task task = Json.Decode<Task>(jsonString);
         int taskID = task.ID;
+        
         if (dataService.UpdateTask(task) > -1)
         {
-            return "1";
+            return task;
         }
         else
         {
-            return "-1";
+            return new Task();
         }
 
     }
