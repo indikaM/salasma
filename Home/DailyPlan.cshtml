@@ -31,6 +31,8 @@
 <script>
 
     $(function () {
+        //taskObject = null;
+        //JSONArray = new Array();
         $("#addtask").css("border", "1px solid #000000");
         $("#addtask").css("border-radius", "8px");
         $("#addtask").focus();
@@ -88,19 +90,21 @@
         $("#Daily,#Weekly , #Monthly").on("click", function () {
             getTasks("Daily");
             showHideDateicker(true);
-
+            showEditPane(false);
         });
 
         $("#Today, #Tomorrow , #DayAfter").on("click", function () {
             $this = $(this);
             try {
                 getTasks($this.attr('id'))
-                showHideDateicker(false);
+                showEditPane(false);
+
             } catch (err) {
                 alert(err);
             }
 
         });
+
 
         function showHideDateicker(show) {
             var $this = $(".datepicker1");
@@ -111,6 +115,8 @@
             }
         }
         function setSelectedDate(val) {
+
+
             var dateText = $("#newlyPickedDate");
             $("#pickedDate").val($.datepicker.formatDate('yy-mm-dd', new Date(val)));
             dateText.html($.datepicker.formatDate('D, MM d , yy', new Date(val)));
@@ -273,7 +279,7 @@
     }
 
     function updateTasksList(JSONdata) {
-
+        console.log("updateTasksList -" + JSON.stringify(JSONdata));
         var tRow = $("#dailyTaskRow_0");
         var tBody = $("#dailyTaskTableBody");
         var tHead = $("#dailyTaskTableHead");
@@ -291,8 +297,6 @@
 
 
             var newRow = tRow.clone(true);
-            console.log("updateTasksList -" + JSONdata);
-
             $.each(JSONdata, function (index, item) {
                 _tempRow = createTableRows(newRow, index, item, incr)
                 _tempRow.appendTo(newTBody);
@@ -306,19 +310,35 @@
     }
 
     function createTableRows(newRow, index, item, incr) {
-        console.log(item.PlannedDate);
         var _tempRow = newRow.clone();
-        var plannedDate = (item.PlannedDate.indexOf("Date") > 0) ? item.PlannedDate : "\/Date(" + new Date(item.PlannedDate).valueOf() + ")\/";
-        console.log("updateTasksList -" + plannedDate);
         _tempRow.attr("id", "dailyTaskRow_" + incr);
-        _tempRow.find('[name="taskName_0"]').val(item.Name).attr("id", "taskName_" + incr).attr("name", "taskName_" + incr);
+        try { _tempRow = updateRowData(_tempRow, item, incr); } catch (e) { console.log(e); }
+
+        /*_tempRow.find('[name="taskName_0"]').val(item.Name).attr("id", "taskName_" + incr).attr("name", "taskName_" + incr);
         _tempRow.find('[name="Reason_0"]').val(item.Reason).attr("id", "Reason_" + incr).attr("name", "Reason_" + incr);
-        _tempRow.find('[name="Duration_0"]').val(item.Duration).attr("id", "Duration_" + incr).attr("name", "Duration_" + incr);
+        _tempRow.find('[name="Duration_0"]').val(item.DurationDisplay).attr("id", "Duration_" + incr).attr("name", "Duration_" + incr);
         _tempRow.find('[name="PlannedDate_0"]').val($.datepicker.formatDate('M dd, y', new Date(parseInt(plannedDate.substr(6))))).attr("id", "PlannedDate_" + incr).attr("name", "PlannedDate_" + incr);
         _tempRow.find('[name="PlannedDate_' + incr + '"]').removeClass('hasDatepicker').datepicker();
         _tempRow.find('[name="Leverage_0"]').val(item.Leverage).attr("id", "Leverage_" + incr).attr("name", "Leverage_" + incr);
         _tempRow.find('[name="Priority_0"]').val(item.Priority).attr("id", "Priority_" + incr).attr("name", "Priority_" + incr);
-         _tempRow.find('[id="taskEdit_0"]').attr("id", "taskEdit_" + incr).attr("href", "javascript:editTask('#taskEdit_" + incr + "')").attr("data-index", incr);
+        _tempRow.find('[id="taskEdit_0"]').attr("id", "taskEdit_" + incr).attr("href", "javascript:editTask('#taskEdit_" + incr + "')").attr("data-index", incr);
+        _tempRow.find('[id="taskUpdate_0"]').attr("id", "taskUpdate_" + incr).attr("href", "javascript:updateTask('#taskUpdate_" + incr + "')").attr("data-index", incr);
+        _tempRow.find('[id="taskRemove_0"]').attr("id", "taskRemove_" + incr).attr("href", "javascript:removeTask('#taskRemove_" + incr + "')").attr("data-index", incr);*/
+        return _tempRow;
+    }
+
+    function updateRowData(_tempRow, item, incr) {
+        console.log(item);
+        var plannedDate = (item.PlannedDate.indexOf("Date") > 0) ? item.PlannedDate : "\/Date(" + new Date(item.PlannedDate).valueOf() + ")\/";
+        console.log(item.PlannedDate);
+        _tempRow.find('[name="taskName_0"]').val(item.Name).attr("id", "taskName_" + incr).attr("name", "taskName_" + incr);
+        _tempRow.find('[name="Reason_0"]').val(item.Reason).attr("id", "Reason_" + incr).attr("name", "Reason_" + incr);
+        _tempRow.find('[name="Duration_0"]').val(item.DurationDisplay).attr("id", "Duration_" + incr).attr("name", "Duration_" + incr);
+        _tempRow.find('[name="PlannedDate_0"]').val($.datepicker.formatDate('M dd, y', new Date(parseInt(plannedDate.substr(6))))).attr("id", "PlannedDate_" + incr).attr("name", "PlannedDate_" + incr);
+        _tempRow.find('[name="PlannedDate_' + incr + '"]').removeClass('hasDatepicker').datepicker();
+        _tempRow.find('[name="Leverage_0"]').val(item.Leverage).attr("id", "Leverage_" + incr).attr("name", "Leverage_" + incr);
+        _tempRow.find('[name="Priority_0"]').val(item.Priority).attr("id", "Priority_" + incr).attr("name", "Priority_" + incr);
+        _tempRow.find('[id="taskEdit_0"]').attr("id", "taskEdit_" + incr).attr("href", "javascript:editTask('#taskEdit_" + incr + "')").attr("data-index", incr);
         _tempRow.find('[id="taskUpdate_0"]').attr("id", "taskUpdate_" + incr).attr("href", "javascript:updateTask('#taskUpdate_" + incr + "')").attr("data-index", incr);
         _tempRow.find('[id="taskRemove_0"]').attr("id", "taskRemove_" + incr).attr("href", "javascript:removeTask('#taskRemove_" + incr + "')").attr("data-index", incr);
         return _tempRow;
@@ -327,15 +347,35 @@
 <!-- Adding a new Task -->
 <script>
 
+    function updateJSONTask(taskObject, task) {
 
+        taskObject.Name = task.Name;
+        taskObject.ID = task.ID;
+        taskObject.ProjectID = task.ProjectID;
+        taskObject.ProjectName = task.projectName;
+        taskObject.PlannedDate = task.PlannedDate;
+        taskObject.ScheduledTime = task.ScheduledTime;
+        taskObject.Duration = task.Duration;
+        taskObject.DurationMessure = task.DurationMessure;
+        taskObject.DurationDisplay = task.DurationDisplay;
+        taskObject.Leverage = task.Leverage;
+        taskObject.Reason = task.Reason;
+        taskObject.Priority = task.Priority;
+        taskObject.PriorityID = task.PriorityID;
+        taskObject.userID = task.userID;
+        printTaskStack(taskObject);
+        return taskObject;
+
+
+    }
 
     function createJSONTask(taskName, ID, projectID, projectName, PlannedDate, ScheduledTime, Duration, DurationMessure, DurationDisplay, Leverage, Reason, Priority, PriorityID) {
 
         taskObject = new Object();
         taskObject.Name = taskName;
         taskObject.ID = ID;
-        taskObject.projectID = projectID;
-        taskObject.projectName = projectName;
+        taskObject.ProjectID = projectID;
+        taskObject.ProjectName = projectName;
         taskObject.PlannedDate = PlannedDate;
         taskObject.ScheduledTime = ScheduledTime;
         taskObject.Duration = Duration;
@@ -346,6 +386,7 @@
         taskObject.Priority = Priority;
         taskObject.PriorityID = PriorityID;
         taskObject.userID = "1";
+        //printTaskStack(taskObject);
         return taskObject;
 
 
@@ -377,29 +418,35 @@
     }
 
     function editTask(Task) {
+        console.log(JSON.stringify(JSONArray));
         index = $(Task).attr("data-index");
         console.log($(Task).attr("id"));
         console.log(index);
         console.log(JSONArray[$(Task).attr("data-index")].ID);
         taskToUpdate = JSONArray[index];
-        var dailyPlanPane = $(".dailyPlanPane");
-        dailyPlanPane.css("width", "70%");
-
-        var taskEditPane = $(".taskEditPane");
-        taskEditPane.removeAttr("hidden");
+        showEditPane(true);
         taskToUpdate = JSONArray[index];
+        printTaskStack(taskToUpdate);
         setEditPane(taskToUpdate, index);
+    }
 
-        //taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
-        //taskToUpdate.PlannedDate = $.datepicker.formatDate('yy-m-dd', new Date(parseInt(taskToUpdate.PlannedDate.substr(6))))
-        //updateTaskToServer(taskToUpdate, "updateTask", index);
+    function showEditPane(show) {
+        var taskEditPane = $(".taskEditPane");
+        var dailyPane = $(".dailyPlanPane")
+
+        try {
+            if (show) {
+                taskEditPane.removeAttr("hidden");
+                dailyPane.css("width", "70%");
+            } else {
+                taskEditPane.attr("hidden", true);
+                dailyPane.css("width", "90%");
+            }
+        } catch (e) { console.log(e); }
     }
 
     function updateTask(Task) {
         index = $(Task).attr("data-index");
-        console.log($(Task).attr("id"));
-        console.log(index);
-        console.log(JSONArray[$(Task).attr("data-index")].ID);
         taskToUpdate = JSONArray[index];
         taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
         //taskToUpdate.PlannedDate = $.datepicker.formatDate('yy-m-dd', new Date(parseInt(taskToUpdate.PlannedDate.substr(6))))
@@ -422,16 +469,6 @@
         var duration = $("#Duration_" + index).val();
         setTaskDurationFromUser(Task, duration);
         Task.DurationDisplay = $("#Duration_" + index).val();
-
-
-        console.log("Task Name ...." + Task.Name);
-        console.log("Task PlannedDate_ ...." + Task.PlannedDate);
-        console.log("Task Reason_ ...." + Task.Reason);
-        console.log("Task Duration ...." + Task.Duration);
-        console.log("Task DurationDisplay ...." + Task.DurationDisplay);
-        console.log("Task DurationMessure ...." + Task.DurationMessure);
-        console.log("Task Leverage ...." + Task.Leverage);
-        console.log("Task Priority ...." + Task.Priority);
         return Task;
     }
     function setTaskDurationFromUser(Task, duration) {
@@ -468,23 +505,12 @@
     }
     function removeTask(Task) {
         index = $(Task).attr("data-index");
-        console.log("id -- " + $(Task).attr("id"));
-        console.log("data-index -- " + $(Task).attr("data-index"));
-        console.log("Task ID -- " + JSONArray[$(Task).attr("data-index")].ID);
-        console.log("Index -- " + index);
-        console.log("JSONArray.length -- " + JSONArray.length);
-
         taskToUpdate = JSONArray[index];
-        console.log("JSONArray.PlannedDate -- " + JSONArray[index].PlannedDate);
         updateTaskToServer(taskToUpdate, "RemoveTask", index);
     }
 
 
     function updateTaskToServer(taskObject, action, index) {
-        console.log("taskObject.Name - " + taskObject.Name);
-        console.log("Inside updateTaskToServer with action=" + taskURL + "?method=" + action + "...");
-
-        console.log(JSON.stringify(taskObject));
         $.ajax({
             url: taskURL + "?method=" + action,
             type: 'POST',
@@ -514,9 +540,20 @@
     }
     function handleServerResponse(action, index, data) {
         if (action == "updateTask") {
-            console.log("UpdateTask Success....");
+            try {
+                var tempRow = $("#dailyTaskRow_" + index);
+                updateRowData(tempRow, data, index);
+                JSONArray[index] = updateJSONTask(JSONArray[index], data);
+                setEditPane(JSONArray[index], index);
+                printTaskStack(JSONArray[index]);
+
+            } catch (e) {
+                console.log(e);
+            }
+
         } else if (action == "AddTask") {
             console.log("Index Passed in " + index);
+            updateTasksList(data);
             console.log("Array Length - " + JSONArray.length);
             JSONArray[index].ID = data;
             console.log("Added Task ID - " + JSONArray[index].ID)
@@ -594,6 +631,7 @@
                             </tr> 
                             i++;
                             <script>
+                                console.log("Test");
                                 createJSONArray(createJSONTask('@task.Name','@task.ID', '@task.ProjectID', '@task.projectName', 
                                 new Date("@task.PlannedDate"), '@task.ScheduledTime', '@task.Duration', '@task.DurationMessure',
                                 '@task.DurationDisplay', '@task.Leverage', '@task.Reason', '@task.Priority', '@task.priorityID'));
@@ -640,12 +678,20 @@
      </div>
     <script>
         function setEditPane(taskEdit, index) {
+            printTaskStack(taskEdit)
             $("#taskName").text(taskEdit.Name);
             $("#editReason").val(taskEdit.Reason);
-            $("#projectNames").val(taskEdit.projectID);
-            $("#taskDue").val($.datepicker.formatDate('MM dd,yy',taskEdit.PlannedDate));  
+            $("#projectNames").val(taskEdit.ProjectID);
+            try {
+                if (taskEdit.PlannedDate.indexOf("Date") > 0) {
+                    console.log(taskEdit.PlannedDate.substr(6));
+                    taskEdit.PlannedDate = new Date(parseInt(taskEdit.PlannedDate.substr(6)));
+                    
+                }
+                $("#taskDue").val($.datepicker.formatDate('MM dd,yy', taskEdit.PlannedDate));
+            } catch (e) { console.log(e); }
             $("#taskEstimates").val(taskEdit.DurationDisplay);
-            
+
             $("#taskSupport").val(taskEdit.Leverage);
             $("#taskPriority").val(taskEdit.Priority);
             $("#taskSchedule").val(taskEdit.ScheduledTime);
@@ -656,17 +702,17 @@
         function setTaskAttrsFromEditPane(taskEdit, index) {
             taskEdit.Name = $("#taskName").text();
             taskEdit.Reason = $("#editReason").val();
-            taskEdit.projectID = $("#projectNames").val();
+            taskEdit.ProjectID = $("#projectNames").val();
             taskEdit.PlannedDate = $("#taskDue").val();
 
             taskEdit.DurationDisplay = $("#taskEstimates").val();
-            setTaskDurationFromUser(taskEdit, $("#taskEstimates").val);
+            setTaskDurationFromUser(taskEdit, $("#taskEstimates").val());
 
             taskEdit.Leverage = $("#taskSupport").val();
             taskEdit.Priority = $("#taskPriority").val();
             taskEdit.ScheduledTime = $("#taskSchedule").val();
 
-            console.log("Priority - - "+taskEdit.Priority)
+            console.log("Priority - - " + taskEdit.Priority)
         }
 
         $('#taskDue').datepicker({
@@ -680,9 +726,21 @@
             taskToUpdate = JSONArray[index];
 
             try { setTaskAttrsFromEditPane(taskToUpdate, index); } catch (e) { console.log(e); }
-            //taskToUpdate = setTaskObjectToUpdate(taskToUpdate, index);
-            //taskToUpdate.PlannedDate = $.datepicker.formatDate('yy-m-dd', new Date(parseInt(taskToUpdate.PlannedDate.substr(6))))
             updateTaskToServer(taskToUpdate, "updateTask", index);
+        }
+
+        function printTaskStack(Task) {
+
+
+            console.log("Task Name ...." + Task.Name);
+            console.log("Task Project ID ...." + Task.ProjectID);
+            console.log("Task PlannedDate_ ...." + Task.PlannedDate);
+            console.log("Task Reason_ ...." + Task.Reason);
+            console.log("Task Duration ...." + Task.Duration);
+            console.log("Task DurationDisplay ...." + Task.DurationDisplay);
+            console.log("Task DurationMessure ...." + Task.DurationMessure);
+            console.log("Task Leverage ...." + Task.Leverage);
+            console.log("Task Priority ...." + Task.Priority);
         }
     </script>
 </div>
