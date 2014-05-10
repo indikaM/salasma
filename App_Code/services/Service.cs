@@ -96,8 +96,8 @@ public class Service
         GetConnection();
         List<Task> TaskList = new List<Task>();
         try{
-            SQL = " select a.ID,a.Name 'Name' ,b.ProjectName 'ProjectName',b.ProjectID `ProjectID`, PlannedDate,a.ScheduledTime,a.Duration, " +
-                    " a.DurationMessure,a.DurationDisplay,a.Leverage,a.Reason,a.Priority,a.userID "+
+            SQL = " select a.ID,a.Name 'Name' ,b.ProjectName 'ProjectName',b.ProjectID `ProjectID`, PlannedDate,a.ScheduledTime,a.Duration 'Duration', " +
+                    " a.DurationMessure 'DurationMessure',a.DurationDisplay,a.Leverage,a.Reason,a.Priority,a.userID " +
                     " from Task a , Project b , userprojects c "+
                     " where Date(PlannedDate) =  Date('"+date+"') "+
                     " and c.ID = a.UserProjectID "+
@@ -109,6 +109,8 @@ public class Service
                Task Task = new Task(result.ID,result.Name,result.ProjectName,result.PlannedDate,result.ScheduledTime,
                                     result.DurationDisplay,result.Leverage,result.Reason,result.Priority,result.userID);
                Task.ProjectID = result.ProjectID;
+               Task.Duration = result.Duration;
+               Task.DurationMessure = result.DurationMessure;
                TaskList.Add(Task);
            }
       }catch(Exception e){
@@ -123,8 +125,8 @@ public class Service
 
     
     public List<Task> GetAllUnplannedTasks(){
-            SQL =   " select a.ID,a.Name 'Name' ,b.ProjectName 'ProjectName',b.ProjectID `ProjectID`,PlannedDate,a.ScheduledTime,a.Duration, "+
-                    " a.DurationMessure,a.DurationDisplay,a.Leverage,a.Reason,a.Priority,a.userID "+
+            SQL =   " select a.ID,a.Name 'Name' ,b.ProjectName 'ProjectName',b.ProjectID `ProjectID`,PlannedDate,a.ScheduledTime,a.Duration 'Duration', "+
+                    " a.DurationMessure 'DurationMessure',a.DurationDisplay,a.Leverage,a.Reason,a.Priority,a.userID " +
                     " from Task a , Project b , userprojects c "+
                     " where Date(PlannedDate) >  curdate() "+
                     " and ScheduledTime='00:00-00:00'"+
@@ -144,6 +146,8 @@ public class Service
                Task Task = new Task(result.ID,result.Name,result.ProjectName,result.PlannedDate,result.ScheduledTime,
                                     result.DurationDisplay,result.Leverage,result.Reason,result.Priority,result.userID);
                Task.ProjectID = result.ProjectID;
+               Task.Duration = result.Duration;
+               Task.DurationMessure = result.DurationMessure;
                TaskList.Add(Task);
            }    
         }catch(Exception e){
